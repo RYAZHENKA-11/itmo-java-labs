@@ -1,6 +1,12 @@
 package app;
 
 import ru.ifmo.se.pokemon.Battle;
+import app.pokemons.water.Bruxish;
+import app.pokemons.rock.Kabuto;
+import app.pokemons.rock.Kabutops;
+import app.pokemons.grass.Bounsweet;
+import app.pokemons.grass.Steenee;
+import app.pokemons.grass.Tsareena;
 
 public class App {
     public static void main(String[] args) {
