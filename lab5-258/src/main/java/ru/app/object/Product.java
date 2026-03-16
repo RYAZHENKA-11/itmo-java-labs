@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Товар, хранящийся в коллекции. Сравнение товаров по умолчанию осуществляется по {@link #id}
- * (естественный порядок).
+ * Product stored in the collection. Product comparison by default is performed by {@link #id}
+ * (natural order).
  */
 public record Product(
     Integer id,
@@ -21,18 +21,18 @@ public record Product(
     implements Comparable<Product> {
 
   /**
-   * Создаёт товар с проверкой всех полей согласно требованиям ТЗ.
+   * Creates a product with validation of all fields according to requirements.
    *
-   * @param id идентификатор (не null, >0)
-   * @param name название (не null, не пустое)
-   * @param coordinates координаты (не null)
-   * @param price цена (может быть null; если не null, то >0 и должна быть конечным числом, не NaN и
-   *     не бесконечность)
-   * @param partNumber артикул (не null, длина от 22 до 83 символов)
-   * @param unitOfMeasure единица измерения (не null)
-   * @param owner владелец (не null)
-   * @param creationDate дата создания (не null)
-   * @throws IllegalArgumentException если какое-либо поле не проходит валидацию
+   * @param id identifier (not null, >0)
+   * @param name name (not null, not empty)
+   * @param coordinates coordinates (not null)
+   * @param price price (may be null; if not null, must be >0 and must be finite, not NaN and
+   *     not infinity)
+   * @param partNumber part number (not null, length from 22 to 83 characters)
+   * @param unitOfMeasure unit of measure (not null)
+   * @param owner owner (not null)
+   * @param creationDate creation date (not null)
+   * @throws IllegalArgumentException if any field fails validation
    */
   public Product(
       Integer id,
@@ -76,12 +76,11 @@ public record Product(
   }
 
   /**
-   * Сравнивает текущий товар с другим по {@code id}. Используется для естественной сортировки в
-   * коллекциях.
+   * Compares this product with another by {@code id}. Used for natural sorting in collections.
    *
-   * @param other другой товар
-   * @return отрицательное число, ноль или положительное число, если текущий id меньше, равен или
-   *     больше другого id соответственно
+   * @param other another product
+   * @return negative, zero, or positive number if this id is less than, equal to, or greater than
+   *     the other id respectively
    */
   @Override
   public int compareTo(Product other) {
@@ -89,11 +88,11 @@ public record Product(
   }
 
   /**
-   * Преобразует объект в карту для последующей сериализации. Вложенные объекты (coordinates, owner)
-   * также преобразуются в карты. Дата создания сохраняется в строковом представлении
+   * Converts the object to a map for serialization. Nested objects (coordinates, owner)
+   * are also converted to maps. Creation date is saved as string representation
    * (ZonedDateTime.toString).
    *
-   * @return карта, содержащая все поля объекта
+   * @return map containing all object fields
    */
   public Map<String, Object> toMap() {
     Map<String, Object> map = new HashMap<>();
@@ -109,13 +108,13 @@ public record Product(
   }
 
   /**
-   * Создаёт объект Product из карты, полученной при десериализации. Выполняет все необходимые
-   * проверки через конструктор.
+   * Creates a Product object from a map obtained during deserialization. Performs all necessary
+   * validations through the constructor.
    *
-   * @param map карта с данными
-   * @return новый экземпляр Product
-   * @throws IllegalArgumentException если карта null, отсутствуют обязательные ключи, значения
-   *     имеют неверный тип или формат
+   * @param map map with data
+   * @return new Product instance
+   * @throws IllegalArgumentException if map is null, required keys are missing, values
+   *     have incorrect type or format
    */
   public static Product fromMap(Map<String, Object> map) throws IllegalArgumentException {
     if (map == null) throw new IllegalArgumentException("'map' can't be null.");
@@ -123,7 +122,11 @@ public record Product(
     Object idObj = map.get("id");
     if (idObj == null) throw new IllegalArgumentException("Missing 'id' in map");
     if (!(idObj instanceof Number)) throw new IllegalArgumentException("'id' must be a number");
-    Integer id = ((Number) idObj).intValue();
+    long idLong = ((Number) idObj).longValue();
+    if (idLong <= 0 || idLong > Integer.MAX_VALUE) {
+      throw new IllegalArgumentException("'id' must be > 0 and <= " + Integer.MAX_VALUE);
+    }
+    Integer id = (int) idLong;
 
     Object nameObj = map.get("name");
     if (nameObj == null) throw new IllegalArgumentException("Missing 'name' in map");
@@ -142,7 +145,11 @@ public record Product(
     if (priceObj != null) {
       if (!(priceObj instanceof Number))
         throw new IllegalArgumentException("'price' must be a number");
-      price = ((Number) priceObj).floatValue();
+      float priceVal = ((Number) priceObj).floatValue();
+      if (priceVal <= 0 || !Float.isFinite(priceVal)) {
+        throw new IllegalArgumentException("'price' must be > 0 and finite");
+      }
+      price = priceVal;
     }
 
     Object pnObj = map.get("partNumber");

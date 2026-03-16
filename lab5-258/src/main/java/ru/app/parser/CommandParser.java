@@ -10,13 +10,13 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.util.Scanner;
 
-/** Парсер командной строки. Преобразует строку в объект команды. */
+/** Command line parser. Converts a string to a command object. */
 public class CommandParser {
   private final Collection collection;
   private final PrintWriter out;
-  private final Scanner scanner; // сканер для интерактивных команд (add, update, add_if_min)
+  private final Scanner scanner;
   private final Invoker invoker;
-  private final File dataFile; // файл для сохранения (может быть null)
+  private final File dataFile;
   private final ConsoleReader consoleReader;
 
   public CommandParser(
@@ -35,14 +35,17 @@ public class CommandParser {
   }
 
   /**
-   * Разбирает строку и возвращает соответствующую команду.
+   * Parses a string and returns the corresponding command.
    *
-   * @param line строка команды (может содержать аргументы)
-   * @return объект команды
-   * @throws IllegalArgumentException если команда неизвестна или аргументы некорректны
+   * @param line command string (may contain arguments)
+   * @return command object
+   * @throws IllegalArgumentException if command is unknown or arguments are incorrect
    */
   public Command parse(String line) {
-    String[] parts = line.split("\\s+", 2);
+    if (line == null || line.isBlank()) {
+      throw new IllegalArgumentException("Command cannot be empty.");
+    }
+    String[] parts = line.trim().split("\\s+", 2);
     String commandName = parts[0].toLowerCase();
     String argument = parts.length > 1 ? parts[1] : null;
 

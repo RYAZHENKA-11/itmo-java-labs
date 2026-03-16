@@ -1,13 +1,13 @@
 package ru.app.object;
 
-/** Единицы измерения товара. Используется в {@link Product}. */
+/** Product units of measure. Used in {@link Product}. */
 public enum UnitOfMeasure {
-  /** Килограммы */
+  /** Kilograms */
   KILOGRAMS,
-  /** Литры */
+  /** Liters */
   LITERS,
-  /** Миллилитры */
+  /** Milliliters */
   MILLILITERS,
-  /** Миллиграммы */
+  /** Milligrams */
   MILLIGRAMS
 }

@@ -16,18 +16,15 @@ import java.util.PriorityQueue;
 import java.util.Scanner;
 
 /**
- * Главный класс приложения. Инициализирует коллекцию, парсер, инвокер и запускает цикл обработки
- * команд.
+ * Main application class. Initializes collection, parser, invoker and starts command processing loop.
  */
 public class Main {
   private static Collection collection;
-  private static File dataFile; // файл для save (может быть null)
+  private static File dataFile;
 
   public static void main(String[] args) {
-    // 1. Обработка аргументов командной строки и инициализация коллекции
     initializeCollection(args);
 
-    // 2. Создание основных объектов
     Scanner consoleScanner = new Scanner(System.in);
     PrintWriter out = new PrintWriter(System.out, true);
     ConsoleReader consoleReader = new ConsoleReader(out, collection);
@@ -36,13 +33,12 @@ public class Main {
         new CommandParser(collection, out, consoleScanner, invoker, dataFile, consoleReader);
     CommandSource source = new ConsoleSource(consoleScanner, out);
 
-    // 3. Главный цикл обработки команд
     out.println("Application started. Type 'help' for available commands.");
     while (true) {
       try {
         String line = source.readLine();
         if (line == null) {
-          break; // конец ввода (например, Ctrl+D)
+          break;
         }
 
         Command command = parser.parse(line);
@@ -55,7 +51,6 @@ public class Main {
         out.println("Error: " + e.getMessage());
       } catch (Exception e) {
         out.println("Unexpected error: " + e.getMessage());
-        // можно также e.printStackTrace();
       }
     }
 
@@ -63,13 +58,12 @@ public class Main {
   }
 
   /**
-   * Инициализирует коллекцию на основе аргументов командной строки. Логика полностью соответствует
-   * исходному Main.
+   * Initializes collection based on command line arguments.
    *
-   * @param args аргументы командной строки
+   * @param args command line arguments
    */
   private static void initializeCollection(String[] args) {
-    if (args.length == 0) {
+    if (args == null || args.length == 0) {
       System.err.println("No file name provided.");
       System.out.println("Initializing with an empty collection...");
       collection = new Collection();
@@ -77,7 +71,7 @@ public class Main {
       System.err.println("File name provided incorrectly.");
       System.out.println("Initializing with an empty collection...");
       collection = new Collection();
-    } else if (!args[0].endsWith(".json")) {
+    } else if (args[0] == null || !args[0].endsWith(".json")) {
       System.err.println("File name must be .json");
       System.out.println("Initializing with an empty collection...");
       collection = new Collection();
@@ -94,7 +88,7 @@ public class Main {
             System.err.println(
                 "Warning: product with id="
                     + p.id()
-                    + " doesn't unique and was skipped: "
+                    + " is not unique and was skipped: "
                     + e.getMessage());
           }
         }
@@ -104,6 +98,10 @@ public class Main {
         collection = new Collection();
       } catch (IOException e) {
         System.err.println("Read error: " + e.getMessage());
+        System.out.println("Initializing with an empty collection...");
+        collection = new Collection();
+      } catch (SecurityException e) {
+        System.err.println("Access denied: " + e.getMessage());
         System.out.println("Initializing with an empty collection...");
         collection = new Collection();
       }

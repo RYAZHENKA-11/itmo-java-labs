@@ -4,8 +4,8 @@ import ru.app.collection.Collection;
 import java.io.PrintWriter;
 
 /**
- * Команда завершения программы. Служит маркером для основного цикла – после её выполнения цикл
- * должен прерваться.
+ * Command to exit the program. Serves as a marker for the main loop - after its execution the loop
+ * should break.
  */
 public class ExitCommand extends AbstractCommand {
 

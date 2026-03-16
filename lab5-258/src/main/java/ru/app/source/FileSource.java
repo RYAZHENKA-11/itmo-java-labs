@@ -4,9 +4,10 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Scanner;
 
-/** Источник команд из файла. */
+/** Command source from file. */
 public class FileSource implements CommandSource, AutoCloseable {
   private final Scanner scanner;
+  private boolean closed = false;
 
   public FileSource(Path path) throws IOException {
     this.scanner = new Scanner(path);
@@ -14,16 +15,19 @@ public class FileSource implements CommandSource, AutoCloseable {
 
   @Override
   public String readLine() throws IOException {
+    if (closed) return null;
     if (scanner.hasNextLine()) {
       return scanner.nextLine();
     } else {
-      scanner.close();
       return null;
     }
   }
 
   @Override
   public void close() {
-    scanner.close();
+    if (!closed) {
+      closed = true;
+      scanner.close();
+    }
   }
 }

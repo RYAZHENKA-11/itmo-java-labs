@@ -7,7 +7,7 @@ import ru.app.object.Product;
 import java.io.PrintWriter;
 import java.util.Scanner;
 
-/** Команда добавления элемента, если его id меньше минимального. */
+/** Command to add an element if its id is less than the minimum. */
 public class AddIfMinCommand extends AbstractCommand {
   private final Scanner scanner;
   private final ConsoleReader consoleReader;
@@ -31,10 +31,11 @@ public class AddIfMinCommand extends AbstractCommand {
       println("Product creation cancelled.");
       return;
     }
-    try {
-      collection.addIfMin(product);
-    } catch (IllegalArgumentException e) {
-      println("Error: " + e.getMessage());
+    boolean added = collection.addIfMin(product);
+    if (added) {
+      println("Product was added with id=" + product.id());
+    } else {
+      println("Product was not added (id is not less than minimum).");
     }
   }
 }

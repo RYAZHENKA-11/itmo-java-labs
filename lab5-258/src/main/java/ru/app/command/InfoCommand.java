@@ -3,7 +3,7 @@ package ru.app.command;
 import ru.app.collection.Collection;
 import java.io.PrintWriter;
 
-/** Команда вывода информации о коллекции. */
+/** Command to output information about the collection. */
 public class InfoCommand extends AbstractCommand {
 
   public InfoCommand(Collection collection, PrintWriter out) {

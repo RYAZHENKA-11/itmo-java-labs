@@ -13,11 +13,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Scanner;
 
-/** Команда выполнения скрипта из файла. */
+/** Command to execute a script from a file. */
 public class ExecuteScriptCommand extends AbstractCommand {
   private final String fileName;
   private final Invoker invoker;
-  private final File dataFile; // глобальный файл для save
+  private final File dataFile;
   private final ConsoleReader consoleReader;
 
   public ExecuteScriptCommand(

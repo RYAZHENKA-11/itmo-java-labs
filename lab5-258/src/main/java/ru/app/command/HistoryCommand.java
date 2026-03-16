@@ -6,7 +6,7 @@ import ru.app.invoker.Invoker;
 import java.io.PrintWriter;
 import java.util.List;
 
-/** Команда вывода истории последних 13 команд. */
+/** Command to output history of last 13 commands. */
 public class HistoryCommand extends AbstractCommand {
   private final Invoker invoker;
 

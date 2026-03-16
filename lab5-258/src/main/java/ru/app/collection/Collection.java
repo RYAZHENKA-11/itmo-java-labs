@@ -10,12 +10,11 @@ import java.util.Set;
 import java.util.PriorityQueue;
 
 /**
- * Управляет коллекцией товаров {@link Product}, хранящихся в очереди с приоритетом (естественный
- * порядок по {@code id}). Гарантирует уникальность идентификаторов и артикулов, а также
- * поддерживает актуальное значение суммы цен всех товаров.
+ * Manages a collection of {@link Product} objects stored in a priority queue (natural order by {@code id}).
+ * Ensures uniqueness of identifiers and part numbers, and maintains the sum of all product prices.
  *
- * <p>Коллекция создаётся с фиксированной датой создания. Все операции добавления, обновления и
- * удаления автоматически корректируют внутренние множества уникальных ключей и сумму цен.
+ * <p>The collection is created with a fixed creation date. All add, update, and remove operations
+ * automatically adjust the internal unique key sets and price sum.
  */
 public class Collection {
   private final PriorityQueue<Product> collection = new PriorityQueue<>();
@@ -24,16 +23,16 @@ public class Collection {
   private Double sumPrice = 0.0;
   private final ZonedDateTime creationDate;
 
-  /** Создаёт пустую коллекцию, устанавливая текущую дату и время как дату создания. */
+  /** Creates an empty collection, setting the current date and time as the creation date. */
   public Collection() {
     creationDate = ZonedDateTime.now();
   }
 
   /**
-   * Создаёт пустую коллекцию с заданной датой создания.
+   * Creates an empty collection with a given creation date.
    *
-   * @param creationDate дата создания коллекции (не может быть {@code null})
-   * @throws IllegalArgumentException если {@code creationDate == null}
+   * @param creationDate collection creation date (cannot be {@code null})
+   * @throws IllegalArgumentException if {@code creationDate == null}
    */
   public Collection(ZonedDateTime creationDate) throws IllegalArgumentException {
     if (creationDate == null) throw new IllegalArgumentException("'creationDate' can't be null");
@@ -41,40 +40,40 @@ public class Collection {
   }
 
   /**
-   * Возвращает текущее количество товаров в коллекции.
+   * Returns the current number of products in the collection.
    *
-   * @return размер коллекции
+   * @return collection size
    */
   public int size() {
     return collection.size();
   }
 
   /**
-   * Возвращает дату создания коллекции.
+   * Returns the collection creation date.
    *
-   * @return дата создания (не {@code null})
+   * @return creation date (not {@code null})
    */
   public ZonedDateTime creationDate() {
     return creationDate;
   }
 
   /**
-   * Возвращает копию внутренней очереди товаров.
+   * Returns a copy of the internal product queue.
    *
-   * @return новая очередь {@link PriorityQueue} с копиями всех товаров
+   * @return new {@link PriorityQueue} with copies of all products
    */
   public PriorityQueue<Product> products() {
     return new PriorityQueue<>(collection);
   }
 
   /**
-   * Добавляет новый товар в коллекцию.
+   * Adds a new product to the collection.
    *
-   * <p>Перед добавлением проверяется уникальность {@code id} и {@code partNumber}. Если товар
-   * успешно добавлен, его цена (если не {@code null}) прибавляется к общей сумме.
+   * <p>Uniqueness of {@code id} and {@code partNumber} is checked before adding. If the product
+   * is successfully added, its price (if not {@code null}) is added to the total sum.
    *
-   * @param product добавляемый товар (проходит валидацию конструктора {@link Product})
-   * @throws IllegalArgumentException если {@code id} или {@code partNumber} не уникальны
+   * @param product product to add (validated through {@link Product} constructor)
+   * @throws IllegalArgumentException if {@code id} or {@code partNumber} are not unique
    */
   public void add(Product product) throws IllegalArgumentException {
     if (!ids.add(product.id())) throw new IllegalArgumentException("'id' must be unique.");
@@ -87,16 +86,15 @@ public class Collection {
   }
 
   /**
-   * Обновляет товар с указанным идентификатором, заменяя его новыми данными.
+   * Updates the product with the specified identifier, replacing it with new data.
    *
-   * <p>Фактически выполняет удаление старого товара и добавление нового с тем же {@code id}. Все
-   * ограничения уникальности применяются к новому товару (кроме самого {@code id}, который остаётся
-   * прежним).
+   * <p>Actually performs removal of the old product and addition of a new one with the same {@code id}.
+   * All uniqueness constraints apply to the new product (except the {@code id} itself, which remains unchanged).
    *
-   * @param id идентификатор обновляемого товара (должен существовать в коллекции)
-   * @param product новый товар, чьи поля будут присвоены (кроме {@code id})
-   * @throws IllegalArgumentException если товар с указанным {@code id} не существует, или если
-   *     новый {@code partNumber} не уникален
+   * @param id identifier of the product to update (must exist in the collection)
+   * @param product new product whose fields will be assigned (except {@code id})
+   * @throws IllegalArgumentException if product with specified {@code id} does not exist, or if
+   *     new {@code partNumber} is not unique
    */
   public void update(Integer id, Product product) throws IllegalArgumentException {
     Product oldProduct = remove(id);
@@ -123,12 +121,12 @@ public class Collection {
   }
 
   /**
-   * Удаляет товар с заданным идентификатором из коллекции.
+   * Removes the product with the specified identifier from the collection.
    *
-   * <p>После удаления корректируется сумма цен и освобождаются соответствующие уникальные ключи.
+   * <p>After removal, the price sum is adjusted and corresponding unique keys are freed.
    *
-   * @param id идентификатор удаляемого товара
-   * @throws IllegalArgumentException если товар с таким {@code id} не найден
+   * @param id identifier of the product to remove
+   * @throws IllegalArgumentException if product with specified {@code id} is not found
    */
   public Product remove(Integer id) throws IllegalArgumentException {
     Product product = collection.stream().filter(x -> x.id().equals(id)).findFirst().orElse(null);
@@ -142,9 +140,9 @@ public class Collection {
   }
 
   /**
-   * Удаляет все товары из коллекции.
+   * Removes all products from the collection.
    *
-   * <p>Сбрасывает множества уникальных ключей и обнуляет сумму цен.
+   * <p>Clears the unique key sets and resets the price sum.
    */
   public void clear() {
     collection.clear();
@@ -154,14 +152,11 @@ public class Collection {
   }
 
   /**
-   * Удаляет первый (наименьший по {@code id}) товар из очереди.
+   * Removes the first (smallest by {@code id}) element from the queue.
    *
-   * <p>Эквивалентно вызову {@link PriorityQueue#remove()} для внутренней очереди.
-   *
-   * @throws java.util.NoSuchElementException если коллекция пуста
+   * @throws java.util.NoSuchElementException if the collection is empty
    */
   public void remove() {
-    if (collection.isEmpty()) return;
     Product product = collection.remove();
     ids.remove(product.id());
     partNumbers.remove(product.partNumber());
@@ -169,38 +164,40 @@ public class Collection {
   }
 
   /**
-   * Добавляет товар, только если его {@code id} меньше, чем {@code id} первого элемента очереди.
+   * Adds the product only if its {@code id} is less than the {@code id} of the first element in the
+   * queue. For an empty collection, the product is always added.
    *
-   * <p><strong>Важно:</strong> метод предполагает, что коллекция не пуста. В противном случае вызов
-   * {@link PriorityQueue#element()} приведёт к {@link java.util.NoSuchElementException}.
-   *
-   * @param product добавляемый товар
-   * @throws IllegalArgumentException если {@code id} или {@code partNumber} не уникальны
-   * @throws java.util.NoSuchElementException если коллекция пуста
+   * @param product the product to add
+   * @return true if the product was added, false otherwise
+   * @throws IllegalArgumentException if {@code id} or {@code partNumber} are not unique
    */
-  public void addIfMin(Product product) {
-    if (collection.isEmpty() || collection.element().id() > product.id()) add(product);
+  public boolean addIfMin(Product product) {
+    if (collection.isEmpty() || collection.element().id() > product.id()) {
+      add(product);
+      return true;
+    }
+    return false;
   }
 
   /**
-   * Возвращает сумму цен всех товаров в коллекции.
+   * Returns the sum of prices of all products in the collection.
    *
-   * <p>Товары с ценой {@code null} не учитываются. Сумма поддерживается актуально при всех
-   * изменениях коллекции.
+   * <p>Products with {@code null} price are not included. The sum is maintained up-to-date for all
+   * collection changes.
    *
-   * @return сумма цен (всегда не {@code null}, начальное значение 0.0)
+   * @return sum of prices (always not {@code null}, initial value 0.0)
    */
   public Double sumPrice() {
     return sumPrice;
   }
 
   /**
-   * Возвращает среднюю арифметическую цену товаров.
+   * Returns the average arithmetic price of products.
    *
-   * <p>Вычисляется как {@link #sumPrice()} / {@link #size()}. Если коллекция пуста, результат может
-   * быть {@code NaN} (0.0 / 0).
+   * <p>Calculated as {@link #sumPrice()} / {@link #size()}. If the collection is empty, the result may
+   * be {@code NaN} (0.0 / 0).
    *
-   * @return средняя цена
+   * @return average price
    */
   public Double averagePrice() {
     if (size() == 0) return 0.0;
@@ -208,24 +205,29 @@ public class Collection {
   }
 
   /**
-   * Возвращает список товаров, у которых единица измерения совпадает с заданной.
+   * Returns a list of products whose unit of measure matches the specified one.
    *
-   * @param unitOfMeasure искомая единица измерения (не {@code null})
-   * @return список товаров (может быть пустым)
+   * @param unitOfMeasure the unit of measure to filter by (not {@code null})
+   * @return list of products (may be empty)
    */
   public List<Product> filterByUnitOfMeasure(UnitOfMeasure unitOfMeasure) {
     return collection.stream().filter(x -> x.unitOfMeasure().equals(unitOfMeasure)).toList();
   }
 
   /**
-   * Вычисляет следующий свободный идентификатор для нового товара.
+   * Calculates the next free identifier for a new product.
    *
-   * <p>Идентификатор равен максимальному существующему {@code id} в коллекции плюс один. Если
-   * коллекция пуста, возвращает 1.
+   * <p>The identifier equals the maximum existing {@code id} in the collection plus one. If the
+   * collection is empty, returns 1.
    *
-   * @return следующий доступный идентификатор
+   * @return next available identifier
+   * @throws IllegalStateException if maximum identifier value is reached
    */
   public Integer nextId() {
-    return collection.stream().mapToInt(Product::id).max().orElse(0) + 1;
+    int maxId = collection.stream().mapToInt(Product::id).max().orElse(0);
+    if (maxId >= Integer.MAX_VALUE) {
+      throw new IllegalStateException("Maximum id value reached.");
+    }
+    return maxId + 1;
   }
 }

@@ -3,15 +3,15 @@ package ru.app.object;
 import java.util.HashMap;
 import java.util.Map;
 
-/** Координаты товара. Оба поля не могут быть null. */
+/** Product coordinates. Both fields cannot be null. */
 public record Coordinates(Integer x, Float y) {
 
   /**
-   * Создаёт координаты с проверкой на null.
+   * Creates coordinates with null validation.
    *
-   * @param x координата X (не null)
-   * @param y координата Y (не null)
-   * @throws IllegalArgumentException если x или y равны null
+   * @param x coordinate X (not null)
+   * @param y coordinate Y (not null)
+   * @throws IllegalArgumentException if x or y are null
    */
   public Coordinates(Integer x, Float y) {
     if (x == null) throw new IllegalArgumentException("'x' can't be null.");
@@ -22,9 +22,9 @@ public record Coordinates(Integer x, Float y) {
   }
 
   /**
-   * Преобразует координаты в карту для сериализации.
+   * Converts coordinates to a map for serialization.
    *
-   * @return карта с ключами "x" и "y"
+   * @return map with keys "x" and "y"
    */
   public Map<String, Object> toMap() {
     Map<String, Object> map = new HashMap<>();
@@ -34,12 +34,11 @@ public record Coordinates(Integer x, Float y) {
   }
 
   /**
-   * Создаёт объект Coordinates из карты.
+   * Creates a Coordinates object from a map.
    *
-   * @param map карта с данными (должна содержать ключи "x" и "y")
-   * @return новый экземпляр Coordinates
-   * @throws IllegalArgumentException если карта null, отсутствуют ключи или значения имеют неверный
-   *     тип
+   * @param map map with data (must contain keys "x" and "y")
+   * @return new Coordinates instance
+   * @throws IllegalArgumentException if map is null, keys are missing, or values have incorrect type
    */
   public static Coordinates fromMap(Map<String, Object> map) throws IllegalArgumentException {
     if (map == null) throw new IllegalArgumentException("'map' can't be null.");
@@ -47,7 +46,11 @@ public record Coordinates(Integer x, Float y) {
     Object xObj = map.get("x");
     if (xObj == null) throw new IllegalArgumentException("Missing 'x' in map");
     if (!(xObj instanceof Number)) throw new IllegalArgumentException("'x' must be a number");
-    Integer x = ((Number) xObj).intValue();
+    long xLong = ((Number) xObj).longValue();
+    if (xLong < Integer.MIN_VALUE || xLong > Integer.MAX_VALUE) {
+      throw new IllegalArgumentException("'x' must be within Integer range");
+    }
+    Integer x = (int) xLong;
 
     Object yObj = map.get("y");
     if (yObj == null) throw new IllegalArgumentException("Missing 'y' in map");

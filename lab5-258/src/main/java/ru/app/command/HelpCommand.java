@@ -3,7 +3,7 @@ package ru.app.command;
 import ru.app.collection.Collection;
 import java.io.PrintWriter;
 
-/** Команда вывода справки по доступным командам. */
+/** Command to output help for available commands. */
 public class HelpCommand extends AbstractCommand {
 
   public HelpCommand(Collection collection, PrintWriter out) {

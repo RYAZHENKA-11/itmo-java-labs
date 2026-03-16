@@ -3,17 +3,17 @@ package ru.app.object;
 import java.util.HashMap;
 import java.util.Map;
 
-/** Местоположение человека. Поля y и name не могут быть null; длина name не более 986. */
+/** Person location. Fields y and name cannot be null; name length must not exceed 986. */
 public record Location(float x, Integer y, long z, String name) {
 
   /**
-   * Создаёт местоположение с проверкой ограничений.
+   * Creates a location with validation of constraints.
    *
-   * @param x координата X
-   * @param y координата Y (не null)
-   * @param z координата Z
-   * @param name название места (не null, длина ≤ 986)
-   * @throws IllegalArgumentException если y == null, name == null или name длиннее 986
+   * @param x coordinate X
+   * @param y coordinate Y (not null)
+   * @param z coordinate Z
+   * @param name place name (not null, length <= 986)
+   * @throws IllegalArgumentException if y is null, name is null, or name length exceeds 986
    */
   public Location(float x, Integer y, long z, String name) {
     if (y == null) throw new IllegalArgumentException("'y' can't be null.");
@@ -28,9 +28,9 @@ public record Location(float x, Integer y, long z, String name) {
   }
 
   /**
-   * Преобразует местоположение в карту для сериализации.
+   * Converts the location to a map for serialization.
    *
-   * @return карта с ключами "x", "y", "z", "name"
+   * @return map with keys "x", "y", "z", "name"
    */
   public Map<String, Object> toMap() {
     Map<String, Object> map = new HashMap<>();
@@ -42,11 +42,11 @@ public record Location(float x, Integer y, long z, String name) {
   }
 
   /**
-   * Создаёт объект Location из карты.
+   * Creates a Location object from a map.
    *
-   * @param map карта с данными (ключи "x", "y", "z", "name")
-   * @return новый экземпляр Location
-   * @throws IllegalArgumentException если карта null, отсутствуют ключи или значения неверного типа
+   * @param map map with data (keys "x", "y", "z", "name")
+   * @return new Location instance
+   * @throws IllegalArgumentException if map is null, keys are missing, or values have incorrect type
    */
   public static Location fromMap(Map<String, Object> map) throws IllegalArgumentException {
     if (map == null) throw new IllegalArgumentException("'map' can't be null.");
@@ -59,7 +59,11 @@ public record Location(float x, Integer y, long z, String name) {
     Object yObj = map.get("y");
     if (yObj == null) throw new IllegalArgumentException("Missing 'y' in map");
     if (!(yObj instanceof Number)) throw new IllegalArgumentException("'y' must be a number");
-    Integer y = ((Number) yObj).intValue();
+    long yLong = ((Number) yObj).longValue();
+    if (yLong < Integer.MIN_VALUE || yLong > Integer.MAX_VALUE) {
+      throw new IllegalArgumentException("'y' must be within Integer range");
+    }
+    Integer y = (int) yLong;
 
     Object zObj = map.get("z");
     if (zObj == null) throw new IllegalArgumentException("Missing 'z' in map");

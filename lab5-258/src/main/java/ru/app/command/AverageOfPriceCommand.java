@@ -3,7 +3,7 @@ package ru.app.command;
 import ru.app.collection.Collection;
 import java.io.PrintWriter;
 
-/** Команда вывода средней цены товаров. */
+/** Command to output the average price of products. */
 public class AverageOfPriceCommand extends AbstractCommand {
 
   public AverageOfPriceCommand(Collection collection, PrintWriter out) {

@@ -7,7 +7,7 @@ import ru.app.object.Product;
 import java.io.PrintWriter;
 import java.util.Scanner;
 
-/** Команда обновления элемента по id. */
+/** Command to update an element by id. */
 public class UpdateCommand extends AbstractCommand {
   private final int id;
   private final Scanner scanner;

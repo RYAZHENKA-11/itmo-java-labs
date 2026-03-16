@@ -3,10 +3,12 @@ package ru.app.command;
 import ru.app.collection.Collection;
 import ru.app.object.UnitOfMeasure;
 
+import ru.app.object.Product;
+
 import java.io.PrintWriter;
 import java.util.List;
 
-/** Команда вывода элементов с заданной единицей измерения. */
+/** Command to output elements with the specified unit of measure. */
 public class FilterByUnitOfMeasureCommand extends AbstractCommand {
   private final UnitOfMeasure unitOfMeasure;
 
@@ -23,7 +25,7 @@ public class FilterByUnitOfMeasureCommand extends AbstractCommand {
 
   @Override
   public void execute() {
-    List<?> filtered = collection.filterByUnitOfMeasure(unitOfMeasure);
+    List<Product> filtered = collection.filterByUnitOfMeasure(unitOfMeasure);
     if (filtered.isEmpty()) {
       println("Filtered list is empty.");
     } else {

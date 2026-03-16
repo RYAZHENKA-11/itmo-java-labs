@@ -5,7 +5,7 @@ import ru.app.object.Product;
 
 import java.io.PrintWriter;
 
-/** Команда вывода всех элементов коллекции. */
+/** Command to output all elements of the collection. */
 public class ShowCommand extends AbstractCommand {
 
   public ShowCommand(Collection collection, PrintWriter out) {

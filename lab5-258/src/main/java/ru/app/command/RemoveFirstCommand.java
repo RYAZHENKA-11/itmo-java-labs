@@ -3,7 +3,7 @@ package ru.app.command;
 import ru.app.collection.Collection;
 import java.io.PrintWriter;
 
-/** Команда удаления первого элемента коллекции. */
+/** Command to remove the first element of the collection. */
 public class RemoveFirstCommand extends AbstractCommand {
 
   public RemoveFirstCommand(Collection collection, PrintWriter out) {

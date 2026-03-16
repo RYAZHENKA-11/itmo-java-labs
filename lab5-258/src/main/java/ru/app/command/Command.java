@@ -1,7 +1,7 @@
 package ru.app.command;
 
-/** Интерфейс для всех команд приложения. */
+/** Interface for all application commands. */
 public interface Command {
-  /** Выполняет команду. */
+  /** Executes the command. */
   void execute();
 }

@@ -3,7 +3,7 @@ package ru.app.command;
 import ru.app.collection.Collection;
 import java.io.PrintWriter;
 
-/** Команда удаления элемента по его id. */
+/** Command to remove an element by its id. */
 public class RemoveByIdCommand extends AbstractCommand {
   private final int id;
 

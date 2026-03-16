@@ -2,13 +2,13 @@ package ru.app.source;
 
 import java.io.IOException;
 
-/** Источник команд: читает строки из какого-либо источника (консоль, файл). */
+/** Command source: reads lines from any source (console, file). */
 public interface CommandSource {
   /**
-   * Читает следующую строку команды.
+   * Reads the next command line.
    *
-   * @return строка команды или null, если источник исчерпан
-   * @throws IOException если ошибка ввода/вывода
+   * @return command line or null if source is exhausted
+   * @throws IOException if I/O error occurs
    */
   String readLine() throws IOException;
 }

@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 
-/** Команда сохранения коллекции в файл. */
+/** Command to save the collection to a file. */
 public class SaveCommand extends AbstractCommand {
   private final File file;
 

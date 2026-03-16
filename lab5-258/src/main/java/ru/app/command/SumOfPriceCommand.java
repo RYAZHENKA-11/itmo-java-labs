@@ -3,7 +3,7 @@ package ru.app.command;
 import ru.app.collection.Collection;
 import java.io.PrintWriter;
 
-/** Команда вывода суммы цен всех товаров. */
+/** Command to output the sum of prices of all products. */
 public class SumOfPriceCommand extends AbstractCommand {
 
   public SumOfPriceCommand(Collection collection, PrintWriter out) {

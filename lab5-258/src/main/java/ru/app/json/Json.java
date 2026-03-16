@@ -203,48 +203,101 @@ public final class Json {
       return list;
     }
 
-    /**
-     * Parses a JSON string (without unescaping – assumes no escaped quotes).
-     *
-     * @return the string content
-     * @throws IOException if the string is unterminated
-     */
-    private String parseString() throws IOException {
-      ++pos;
-      StringBuilder sb = new StringBuilder();
-      while (pos < input.length()) {
-        char c = input.charAt(pos);
-        if (c != '"') sb.append(c);
-        else {
-          ++pos;
-          return sb.toString();
+  /**
+   * Parses a JSON string, handling escape sequences.
+   *
+   * @return the string content with escape sequences resolved
+   * @throws IOException if the string is unterminated or has invalid escape
+   */
+  private String parseString() throws IOException {
+    ++pos;
+    StringBuilder sb = new StringBuilder();
+    while (pos < input.length()) {
+      char c = input.charAt(pos);
+      if (c == '"') {
+        ++pos;
+        return sb.toString();
+      } else if (c == '\\') {
+        if (pos + 1 >= input.length()) {
+          throw new IOException("Unexpected end of input in escape sequence.");
         }
         ++pos;
+        char escaped = input.charAt(pos);
+        switch (escaped) {
+          case '"' -> sb.append('"');
+          case '\\' -> sb.append('\\');
+          case 'n' -> sb.append('\n');
+          case 'r' -> sb.append('\r');
+          case 't' -> sb.append('\t');
+          case 'b' -> sb.append('\b');
+          case 'f' -> sb.append('\f');
+          case '/' -> sb.append('/');
+          case 'u' -> {
+            if (pos + 4 >= input.length()) {
+              throw new IOException("Invalid unicode escape sequence.");
+            }
+            String hex = input.substring(pos + 1, pos + 5);
+            try {
+              int codePoint = Integer.parseInt(hex, 16);
+              sb.append((char) codePoint);
+              pos += 4;
+            } catch (NumberFormatException e) {
+              throw new IOException("Invalid unicode escape sequence: " + hex);
+            }
+          }
+          default -> throw new IOException("Invalid escape sequence: \\" + escaped);
+        }
+      } else {
+        sb.append(c);
       }
-      throw new IOException("Unterminated string.");
+      ++pos;
     }
+    throw new IOException("Unterminated string.");
+  }
 
     /**
      * Parses a JSON number and returns it as an {@code Integer} if it contains no fractional or
      * exponent part, otherwise as a {@code Float}.
      *
      * @return the parsed number
-     * @throws IOException if the number format is invalid
+     * @throws IOException on syntax error or invalid number format
      */
     private Number parseNumber() throws IOException {
       int start = pos;
       boolean isFloating = false;
-      if (input.charAt(pos) == '-') ++pos;
+      
+      if (pos >= input.length()) throw new IOException("Unexpected end of input.");
+      
+      char firstChar = input.charAt(pos);
+      if (firstChar == '-') {
+        ++pos;
+      } else if (firstChar == '+') {
+        ++pos;
+      } else if (firstChar == '.') {
+        isFloating = true;
+        ++pos;
+      } else if (!Character.isDigit(firstChar)) {
+        throw new IOException("Expected number at position " + pos);
+      }
+      
       while (pos < input.length() && Character.isDigit(input.charAt(pos))) ++pos;
+      
       if (pos < input.length() && input.charAt(pos) == '.') {
         isFloating = true;
         ++pos;
+        if (pos >= input.length() || !Character.isDigit(input.charAt(pos))) {
+          throw new IOException("Expected digit after decimal point at position " + pos);
+        }
         while (pos < input.length() && Character.isDigit(input.charAt(pos))) ++pos;
       }
+      
       if (pos < input.length() && (input.charAt(pos) == 'e' || input.charAt(pos) == 'E')) {
         isFloating = true;
         ++pos;
         if (pos < input.length() && (input.charAt(pos) == '+' || input.charAt(pos) == '-')) ++pos;
+        if (pos >= input.length() || !Character.isDigit(input.charAt(pos))) {
+          throw new IOException("Expected digit after exponent at position " + pos);
+        }
         while (pos < input.length() && Character.isDigit(input.charAt(pos))) ++pos;
       }
 
@@ -310,6 +363,7 @@ public final class Json {
       else if (obj instanceof List) serializeList((List<Map<String, Object>>) obj, sb);
       else if (obj instanceof String) serializeString((String) obj, sb);
       else if (obj instanceof Number) sb.append(obj);
+      else if (obj instanceof Boolean) sb.append(obj);
       else throw new IOException("Unsupported type: " + obj.getClass());
     }
 
@@ -352,19 +406,27 @@ public final class Json {
       sb.append(']');
     }
 
-    /**
-     * Serializes a string as a JSON string literal (enclosed in double quotes).
-     *
-     * <p><strong>Note:</strong> This implementation does not escape special characters inside the
-     * string.
-     *
-     * @param str the string to serialize
-     * @param sb the {@code StringBuilder} to append to
-     */
-    private static void serializeString(String str, StringBuilder sb) {
-      sb.append('"');
-      sb.append(str);
-      sb.append('"');
+  /**
+   * Serializes a string as a JSON string literal (enclosed in double quotes), escaping special
+   * characters.
+   *
+   * @param str the string to serialize
+   * @param sb the {@code StringBuilder} to append to
+   */
+  private static void serializeString(String str, StringBuilder sb) {
+    sb.append('"');
+    for (int i = 0; i < str.length(); i++) {
+      char c = str.charAt(i);
+      switch (c) {
+        case '"' -> sb.append("\\\"");
+        case '\\' -> sb.append("\\\\");
+        case '\n' -> sb.append("\\n");
+        case '\r' -> sb.append("\\r");
+        case '\t' -> sb.append("\\t");
+        default -> sb.append(c);
+      }
     }
+    sb.append('"');
+  }
   }
 }

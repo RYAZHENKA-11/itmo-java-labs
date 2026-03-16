@@ -7,15 +7,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-/** Инвокер, который выполняет команды и хранит историю последних 13 команд. */
+/** Invoker that executes commands and stores history of last 13 commands. */
 public class Invoker {
   private static final int HISTORY_SIZE = 13;
   private final Queue<String> history = new LinkedList<>();
 
   /**
-   * Выполняет команду и добавляет её имя в историю.
+   * Executes a command and adds its name to history.
    *
-   * @param command команда для выполнения
+   * @param command command to execute
    */
   public void execute(Command command) {
     if (command instanceof AbstractCommand) {
@@ -27,9 +27,9 @@ public class Invoker {
   }
 
   /**
-   * Возвращает копию списка истории команд.
+   * Returns a copy of the command history list.
    *
-   * @return список последних имён команд
+   * @return list of last command names
    */
   public List<String> getHistory() {
     return List.copyOf(history);

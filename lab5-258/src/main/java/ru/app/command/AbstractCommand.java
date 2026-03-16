@@ -4,16 +4,16 @@ import ru.app.collection.Collection;
 
 import java.io.PrintWriter;
 
-/** Абстрактная базовая команда, содержащая общие поля и методы. */
+/** Abstract base command containing common fields and methods. */
 public abstract class AbstractCommand implements Command {
   protected final Collection collection;
   protected final PrintWriter out;
 
   /**
-   * Конструктор.
+   * Constructor.
    *
-   * @param collection коллекция, с которой работает команда
-   * @param out поток вывода для результатов
+   * @param collection the collection the command operates on
+   * @param out output stream for results
    */
   public AbstractCommand(Collection collection, PrintWriter out) {
     this.collection = collection;
@@ -21,16 +21,16 @@ public abstract class AbstractCommand implements Command {
   }
 
   /**
-   * Возвращает имя команды (без аргументов) для истории.
+   * Returns the command name (without arguments) for history.
    *
-   * @return имя команды
+   * @return command name
    */
   public abstract String getName();
 
   /**
-   * Удобный метод для вывода строки с переводом строки.
+   * Convenience method for printing a line.
    *
-   * @param message сообщение для вывода
+   * @param message message to print
    */
   protected void println(String message) {
     out.println(message);

@@ -7,19 +7,19 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 /**
- * Человек (владелец товара). Имя не может быть null или пустым; местоположение не может быть null.
- * Дата рождения и паспорт могут быть null.
+ * Person (product owner). Name cannot be null or empty; location cannot be null.
+ * Birthday and passport may be null.
  */
 public record Person(String name, Date birthday, String passportID, Location location) {
 
   /**
-   * Создаёт человека с проверкой ограничений.
+   * Creates a person with validation of constraints.
    *
-   * @param name имя (не null, не пустое)
-   * @param birthday дата рождения (может быть null)
-   * @param passportID паспорт (может быть null)
-   * @param location местоположение (не null)
-   * @throws IllegalArgumentException если name == null или пусто, или location == null
+   * @param name name (not null, not empty)
+   * @param birthday birthday (may be null)
+   * @param passportID passport (may be null)
+   * @param location location (not null)
+   * @throws IllegalArgumentException if name is null or empty, or location is null
    */
   public Person(String name, Date birthday, String passportID, Location location) {
     if (name == null) throw new IllegalArgumentException("'name' can't be null.");
@@ -35,10 +35,10 @@ public record Person(String name, Date birthday, String passportID, Location loc
   }
 
   /**
-   * Преобразует объект в карту для сериализации. Дата рождения форматируется в ISO 8601 с
-   * миллисекундами и часовым поясом.
+   * Converts the object to a map for serialization. Birthday is formatted in ISO 8601 with
+   * milliseconds and timezone.
    *
-   * @return карта с ключами "name", "birthday", "passportID", "location"
+   * @return map with keys "name", "birthday", "passportID", "location"
    */
   public Map<String, Object> toMap() {
     Map<String, Object> map = new HashMap<>();
@@ -55,12 +55,12 @@ public record Person(String name, Date birthday, String passportID, Location loc
   }
 
   /**
-   * Создаёт объект Person из карты.
+   * Creates a Person object from a map.
    *
-   * @param map карта с данными (ключи "name", "birthday", "passportID", "location")
-   * @return новый экземпляр Person
-   * @throws IllegalArgumentException если карта null, отсутствуют обязательные ключи, значения
-   *     имеют неверный тип или формат
+   * @param map map with data (keys "name", "birthday", "passportID", "location")
+   * @return new Person instance
+   * @throws IllegalArgumentException if map is null, required keys are missing, values
+   *     have incorrect type or format
    */
   public static Person fromMap(Map<String, Object> map) throws IllegalArgumentException {
     if (map == null) throw new IllegalArgumentException("'map' can't be null.");
@@ -75,7 +75,7 @@ public record Person(String name, Date birthday, String passportID, Location loc
     if (bdayObj != null) {
       if (!(bdayObj instanceof String))
         throw new IllegalArgumentException("'birthday' must be a string");
-      String dateStr = (String) map.get("birthday");
+      String dateStr = (String) bdayObj;
       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
       try {
         birthday = sdf.parse(dateStr);

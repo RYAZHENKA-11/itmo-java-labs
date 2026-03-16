@@ -7,7 +7,7 @@ import ru.app.object.Product;
 import java.io.PrintWriter;
 import java.util.Scanner;
 
-/** Команда добавления нового элемента в коллекцию. */
+/** Command to add a new element to the collection. */
 public class AddCommand extends AbstractCommand {
   private final Scanner scanner;
   private final ConsoleReader consoleReader;

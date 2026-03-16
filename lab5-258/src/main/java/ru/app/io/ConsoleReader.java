@@ -12,8 +12,8 @@ import java.util.Date;
 import java.util.Scanner;
 
 /**
- * Утилитарный класс для чтения данных продукта с валидацией. Не хранит состояние, все методы
- * получают Scanner как параметр.
+ * Utility class for reading product data with validation. Does not maintain state, all methods
+ * receive Scanner as a parameter.
  */
 public class ConsoleReader {
   private final PrintWriter out;
@@ -73,10 +73,12 @@ public class ConsoleReader {
 
   public UnitOfMeasure readUnitOfMeasure(Scanner scanner) {
     while (true) {
-      out.println("Chose from: " + Arrays.toString(UnitOfMeasure.values()));
+      out.println("Choose from: " + Arrays.toString(UnitOfMeasure.values()));
       out.print("  Unit of measure: ");
       out.flush();
-      String line = scanner.nextLine().trim();
+      String line = scanner.nextLine();
+      if (line == null) return null;
+      line = line.trim();
       if (line.isEmpty()) {
         out.println("Can't be empty.");
         continue;
@@ -89,12 +91,20 @@ public class ConsoleReader {
     }
   }
 
+  private static final int MAX_INPUT_LENGTH = 10000;
+
   private String readString(
       Scanner scanner, String prompt, boolean nullable, int minLength, int maxLength) {
     while (true) {
       out.print(prompt + " ");
       out.flush();
-      String line = scanner.nextLine().trim();
+      String line = scanner.nextLine();
+      if (line == null) return null;
+      if (line.length() > MAX_INPUT_LENGTH) {
+        out.println("Input too long. Maximum length is " + MAX_INPUT_LENGTH + " characters.");
+        continue;
+      }
+      line = line.trim();
       if (line.isEmpty()) {
         if (nullable) return null;
         out.println("Can't be empty.");
@@ -116,7 +126,9 @@ public class ConsoleReader {
     while (true) {
       out.print(prompt + " ");
       out.flush();
-      String line = scanner.nextLine().trim();
+      String line = scanner.nextLine();
+      if (line == null) return null;
+      line = line.trim();
       if (line.isEmpty()) {
         out.println("Can't be empty.");
         continue;
@@ -133,7 +145,9 @@ public class ConsoleReader {
     while (true) {
       out.print(prompt + " ");
       out.flush();
-      String line = scanner.nextLine().trim();
+      String line = scanner.nextLine();
+      if (line == null) return null;
+      line = line.trim();
       if (line.isEmpty()) {
         if (nullable) return null;
         out.println("Can't be empty.");
@@ -160,7 +174,9 @@ public class ConsoleReader {
     while (true) {
       out.print(prompt + " ");
       out.flush();
-      String line = scanner.nextLine().trim();
+      String line = scanner.nextLine();
+      if (line == null) return null;
+      line = line.trim();
       if (line.isEmpty()) {
         out.println("Can't be empty.");
         continue;
@@ -179,12 +195,14 @@ public class ConsoleReader {
     while (true) {
       out.print(prompt + " ");
       out.flush();
-      String line = scanner.nextLine().trim();
+      String line = scanner.nextLine();
+      if (line == null) return null;
+      line = line.trim();
       if (line.isEmpty()) return null;
       try {
         return sdf.parse(line);
       } catch (ParseException e) {
-        out.println("Wrong format. Waiting yyyy-MM-dd.");
+        out.println("Wrong format. Expected yyyy-MM-dd.");
       }
     }
   }
