@@ -1,5 +1,6 @@
 package ru.app.parser;
 
+import org.jline.terminal.Terminal;
 import ru.app.collection.Collection;
 import ru.app.command.*;
 import ru.app.invoker.Invoker;
@@ -29,6 +30,32 @@ public class CommandParser {
   private final Command historyCommand;
   private final Command sumOfPriceCommand;
   private final Command averageOfPriceCommand;
+
+  public CommandParser(
+      Collection collection,
+      PrintWriter out,
+      Terminal terminal,
+      Invoker invoker,
+      File dataFile,
+      ConsoleReader consoleReader) {
+    this.collection = collection;
+    this.out = out;
+    this.scanner = new Scanner(terminal.input());
+    this.invoker = invoker;
+    this.dataFile = dataFile;
+    this.consoleReader = consoleReader;
+
+    helpCommand = new HelpCommand(collection, out);
+    infoCommand = new InfoCommand(collection, out);
+    showCommand = new ShowCommand(collection, out);
+    clearCommand = new ClearCommand(collection, out);
+    saveCommand = new SaveCommand(collection, out, dataFile);
+    exitCommand = new ExitCommand(collection, out);
+    removeFirstCommand = new RemoveFirstCommand(collection, out);
+    historyCommand = new HistoryCommand(collection, out, invoker);
+    sumOfPriceCommand = new SumOfPriceCommand(collection, out);
+    averageOfPriceCommand = new AverageOfPriceCommand(collection, out);
+  }
 
   public CommandParser(
       Collection collection,
@@ -127,11 +154,5 @@ public class CommandParser {
           "Invalid unit of measure. Available: "
               + java.util.Arrays.toString(UnitOfMeasure.values()));
     }
-  }
-
-  public static String extractCommandName(String line) {
-    if (line == null || line.isBlank()) return null;
-    String[] parts = line.trim().split("\\s+", 2);
-    return parts[0].toLowerCase();
   }
 }

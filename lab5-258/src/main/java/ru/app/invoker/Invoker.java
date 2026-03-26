@@ -9,7 +9,7 @@ import java.util.Queue;
 
 /** Invoker that executes commands and stores history of last 13 commands. */
 public class Invoker {
-  private static final int HISTORY_SIZE = 13;
+  public static final int HISTORY_SIZE = 13;
   private final Queue<String> history = new LinkedList<>();
 
   /**
@@ -33,5 +33,13 @@ public class Invoker {
    */
   public List<String> getHistory() {
     return List.copyOf(history);
+  }
+
+  public void setHistory(List<String> historyList) {
+    history.clear();
+    for (String cmd : historyList) {
+      history.add(cmd);
+      if (history.size() > HISTORY_SIZE) history.poll();
+    }
   }
 }
