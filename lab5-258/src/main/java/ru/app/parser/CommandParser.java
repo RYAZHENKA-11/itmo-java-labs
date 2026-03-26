@@ -19,6 +19,17 @@ public class CommandParser {
   private final File dataFile;
   private final ConsoleReader consoleReader;
 
+  private final Command helpCommand;
+  private final Command infoCommand;
+  private final Command showCommand;
+  private final Command clearCommand;
+  private final Command saveCommand;
+  private final Command exitCommand;
+  private final Command removeFirstCommand;
+  private final Command historyCommand;
+  private final Command sumOfPriceCommand;
+  private final Command averageOfPriceCommand;
+
   public CommandParser(
       Collection collection,
       PrintWriter out,
@@ -32,6 +43,17 @@ public class CommandParser {
     this.invoker = invoker;
     this.dataFile = dataFile;
     this.consoleReader = consoleReader;
+
+    helpCommand = new HelpCommand(collection, out);
+    infoCommand = new InfoCommand(collection, out);
+    showCommand = new ShowCommand(collection, out);
+    clearCommand = new ClearCommand(collection, out);
+    saveCommand = new SaveCommand(collection, out, dataFile);
+    exitCommand = new ExitCommand(collection, out);
+    removeFirstCommand = new RemoveFirstCommand(collection, out);
+    historyCommand = new HistoryCommand(collection, out, invoker);
+    sumOfPriceCommand = new SumOfPriceCommand(collection, out);
+    averageOfPriceCommand = new AverageOfPriceCommand(collection, out);
   }
 
   /**
@@ -49,53 +71,44 @@ public class CommandParser {
     String commandName = parts[0].toLowerCase();
     String argument = parts.length > 1 ? parts[1] : null;
 
-    switch (commandName) {
-      case "help":
-        return new HelpCommand(collection, out);
-      case "info":
-        return new InfoCommand(collection, out);
-      case "show":
-        return new ShowCommand(collection, out);
-      case "add":
-        return new AddCommand(collection, out, scanner, consoleReader);
-      case "update":
+    return switch (commandName) {
+      case "help" -> helpCommand;
+      case "info" -> infoCommand;
+      case "show" -> showCommand;
+      case "add" -> new AddCommand(collection, out, scanner, consoleReader);
+      case "update" -> {
         if (argument == null) throw new IllegalArgumentException("update requires id argument");
         int updateId = parseInt(argument);
-        return new UpdateCommand(collection, out, updateId, scanner, consoleReader);
-      case "remove_by_id":
+        yield new UpdateCommand(collection, out, updateId, scanner, consoleReader);
+      }
+      case "remove_by_id" -> {
         if (argument == null)
           throw new IllegalArgumentException("remove_by_id requires id argument");
         int removeId = parseInt(argument);
-        return new RemoveByIdCommand(collection, out, removeId);
-      case "clear":
-        return new ClearCommand(collection, out);
-      case "save":
-        return new SaveCommand(collection, out, dataFile);
-      case "execute_script":
+        yield new RemoveByIdCommand(collection, out, removeId);
+      }
+      case "clear" -> clearCommand;
+      case "save" -> saveCommand;
+      case "execute_script" -> {
         if (argument == null)
           throw new IllegalArgumentException("execute_script requires file name");
-        return new ExecuteScriptCommand(
+        yield new ExecuteScriptCommand(
             collection, out, argument, invoker, dataFile, consoleReader);
-      case "exit":
-        return new ExitCommand(collection, out);
-      case "remove_first":
-        return new RemoveFirstCommand(collection, out);
-      case "add_if_min":
-        return new AddIfMinCommand(collection, out, scanner, consoleReader);
-      case "history":
-        return new HistoryCommand(collection, out, invoker);
-      case "sum_of_price":
-        return new SumOfPriceCommand(collection, out);
-      case "average_of_price":
-        return new AverageOfPriceCommand(collection, out);
-      case "filter_by_unit_of_measure":
+      }
+      case "exit" -> exitCommand;
+      case "remove_first" -> removeFirstCommand;
+      case "add_if_min" -> new AddIfMinCommand(collection, out, scanner, consoleReader);
+      case "history" -> historyCommand;
+      case "sum_of_price" -> sumOfPriceCommand;
+      case "average_of_price" -> averageOfPriceCommand;
+      case "filter_by_unit_of_measure" -> {
         if (argument == null)
           throw new IllegalArgumentException("filter_by_unit_of_measure requires unit");
         UnitOfMeasure uom = parseUnitOfMeasure(argument);
-        return new FilterByUnitOfMeasureCommand(collection, out, uom);
-      default:
-        throw new IllegalArgumentException("Unknown command: " + commandName);
-    }
+        yield new FilterByUnitOfMeasureCommand(collection, out, uom);
+      }
+      default -> throw new IllegalArgumentException("Unknown command: " + commandName);
+    };
   }
 
   private int parseInt(String s) {
@@ -114,5 +127,11 @@ public class CommandParser {
           "Invalid unit of measure. Available: "
               + java.util.Arrays.toString(UnitOfMeasure.values()));
     }
+  }
+
+  public static String extractCommandName(String line) {
+    if (line == null || line.isBlank()) return null;
+    String[] parts = line.trim().split("\\s+", 2);
+    return parts[0].toLowerCase();
   }
 }

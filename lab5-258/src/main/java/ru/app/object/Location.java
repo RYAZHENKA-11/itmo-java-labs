@@ -12,7 +12,7 @@ public record Location(float x, Integer y, long z, String name) {
    * @param x coordinate X
    * @param y coordinate Y (not null)
    * @param z coordinate Z
-   * @param name place name (not null, length <= 986)
+   * @param name place name (not null, length shorter than 986)
    * @throws IllegalArgumentException if y is null, name is null, or name length exceeds 986
    */
   public Location(float x, Integer y, long z, String name) {

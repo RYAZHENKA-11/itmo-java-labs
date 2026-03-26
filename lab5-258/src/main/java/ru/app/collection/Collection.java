@@ -21,6 +21,7 @@ public class Collection {
   private final Set<Integer> ids = new HashSet<>();
   private final Set<String> partNumbers = new HashSet<>();
   private Double sumPrice = 0.0;
+  private int maxId = 0;
   private final ZonedDateTime creationDate;
 
   /** Creates an empty collection, setting the current date and time as the creation date. */
@@ -83,6 +84,7 @@ public class Collection {
     }
     collection.add(product);
     if (product.price() != null) sumPrice += product.price();
+    if (product.id() > maxId) maxId = product.id();
   }
 
   /**
@@ -117,7 +119,7 @@ public class Collection {
   }
 
   public boolean isExist(Integer id) {
-    return collection.stream().anyMatch(x -> x.id().equals(id));
+    return ids.contains(id);
   }
 
   /**
@@ -136,6 +138,9 @@ public class Collection {
     ids.remove(product.id());
     partNumbers.remove(product.partNumber());
     if (product.price() != null) sumPrice -= product.price();
+    if (product.id() == maxId) {
+      maxId = collection.stream().mapToInt(Product::id).max().orElse(0);
+    }
     return product;
   }
 
@@ -149,6 +154,7 @@ public class Collection {
     ids.clear();
     partNumbers.clear();
     sumPrice = 0.0;
+    maxId = 0;
   }
 
   /**
@@ -161,6 +167,9 @@ public class Collection {
     ids.remove(product.id());
     partNumbers.remove(product.partNumber());
     if (product.price() != null) sumPrice -= product.price();
+    if (product.id() == maxId) {
+      maxId = collection.stream().mapToInt(Product::id).max().orElse(0);
+    }
   }
 
   /**
@@ -215,7 +224,7 @@ public class Collection {
   }
 
   /**
-   * Calculates the next free identifier for a new product.
+   * Returns the next free identifier for a new product.
    *
    * <p>The identifier equals the maximum existing {@code id} in the collection plus one. If the
    * collection is empty, returns 1.
@@ -224,7 +233,6 @@ public class Collection {
    * @throws IllegalStateException if maximum identifier value is reached
    */
   public Integer nextId() {
-    int maxId = collection.stream().mapToInt(Product::id).max().orElse(0);
     if (maxId >= Integer.MAX_VALUE) {
       throw new IllegalStateException("Maximum id value reached.");
     }

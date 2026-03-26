@@ -5,6 +5,7 @@ import ru.app.command.Command;
 import ru.app.command.ExitCommand;
 import ru.app.invoker.Invoker;
 import ru.app.io.ConsoleReader;
+import ru.app.io.InputHistory;
 import ru.app.json.Json;
 import ru.app.object.Product;
 import ru.app.parser.CommandParser;
@@ -12,6 +13,7 @@ import ru.app.source.CommandSource;
 import ru.app.source.ConsoleSource;
 
 import java.io.*;
+import java.nio.file.Path;
 import java.util.PriorityQueue;
 import java.util.Scanner;
 
@@ -31,7 +33,11 @@ public class Main {
     Invoker invoker = new Invoker();
     CommandParser parser =
         new CommandParser(collection, out, consoleScanner, invoker, dataFile, consoleReader);
-    CommandSource source = new ConsoleSource(consoleScanner, out);
+    
+    InputHistory history = new InputHistory(dataFile != null ? dataFile.toPath() : Path.of("."));
+    history.load();
+    
+    CommandSource source = new ConsoleSource(out, history);
 
     out.println("Application started. Type 'help' for available commands.");
     while (true) {
@@ -43,6 +49,12 @@ public class Main {
 
         Command command = parser.parse(line);
         invoker.execute(command);
+        
+        String commandName = CommandParser.extractCommandName(line);
+        if (commandName != null) {
+          history.add(commandName);
+          history.save();
+        }
 
         if (command instanceof ExitCommand) {
           break;
