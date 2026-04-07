@@ -7,8 +7,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 /**
- * Person (product owner). Name cannot be null or empty; location cannot be null.
- * Birthday and passport may be null.
+ * Person (product owner). Name cannot be null or empty; location cannot be null. Birthday and
+ * passport may be null.
  */
 public record Person(String name, Date birthday, String passportID, Location location) {
 
@@ -16,8 +16,8 @@ public record Person(String name, Date birthday, String passportID, Location loc
    * Creates a person with validation of constraints.
    *
    * @param name name (not null, not empty)
-   * @param birthday birthday (may be null)
-   * @param passportID passport (may be null)
+   * @param birthday birthday (can be null)
+   * @param passportID passport (can be null)
    * @param location location (not null)
    * @throws IllegalArgumentException if name is null or empty, or location is null
    */
@@ -46,9 +46,7 @@ public record Person(String name, Date birthday, String passportID, Location loc
     if (birthday != null) {
       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
       map.put("birthday", sdf.format(birthday));
-    } else {
-      map.put("birthday", null);
-    }
+    } else map.put("birthday", null);
     map.put("passportID", passportID);
     map.put("location", location.toMap());
     return map;
@@ -59,8 +57,8 @@ public record Person(String name, Date birthday, String passportID, Location loc
    *
    * @param map map with data (keys "name", "birthday", "passportID", "location")
    * @return new Person instance
-   * @throws IllegalArgumentException if map is null, required keys are missing, values
-   *     have incorrect type or format
+   * @throws IllegalArgumentException if map is null, required keys are missing, values have
+   *     incorrect type or format
    */
   public static Person fromMap(Map<String, Object> map) throws IllegalArgumentException {
     if (map == null) throw new IllegalArgumentException("'map' can't be null.");
@@ -73,9 +71,8 @@ public record Person(String name, Date birthday, String passportID, Location loc
     Date birthday = null;
     Object bdayObj = map.get("birthday");
     if (bdayObj != null) {
-      if (!(bdayObj instanceof String))
+      if (!(bdayObj instanceof String dateStr))
         throw new IllegalArgumentException("'birthday' must be a string");
-      String dateStr = (String) bdayObj;
       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
       try {
         birthday = sdf.parse(dateStr);

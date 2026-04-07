@@ -12,7 +12,7 @@ public record Location(float x, Integer y, long z, String name) {
    * @param x coordinate X
    * @param y coordinate Y (not null)
    * @param z coordinate Z
-   * @param name place name (not null, length shorter than 986)
+   * @param name place name (not null, length not more than 986)
    * @throws IllegalArgumentException if y is null, name is null, or name length exceeds 986
    */
   public Location(float x, Integer y, long z, String name) {
@@ -46,7 +46,8 @@ public record Location(float x, Integer y, long z, String name) {
    *
    * @param map map with data (keys "x", "y", "z", "name")
    * @return new Location instance
-   * @throws IllegalArgumentException if map is null, keys are missing, or values have incorrect type
+   * @throws IllegalArgumentException if map is null, keys are missing, or values have incorrect
+   *     type
    */
   public static Location fromMap(Map<String, Object> map) throws IllegalArgumentException {
     if (map == null) throw new IllegalArgumentException("'map' can't be null.");
@@ -60,9 +61,8 @@ public record Location(float x, Integer y, long z, String name) {
     if (yObj == null) throw new IllegalArgumentException("Missing 'y' in map");
     if (!(yObj instanceof Number)) throw new IllegalArgumentException("'y' must be a number");
     long yLong = ((Number) yObj).longValue();
-    if (yLong < Integer.MIN_VALUE || yLong > Integer.MAX_VALUE) {
+    if (yLong < Integer.MIN_VALUE || yLong > Integer.MAX_VALUE)
       throw new IllegalArgumentException("'y' must be within Integer range");
-    }
     Integer y = (int) yLong;
 
     Object zObj = map.get("z");

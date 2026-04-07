@@ -1,24 +1,24 @@
 package ru.app;
 
-import org.jline.reader.LineReader;
-import org.jline.reader.LineReaderBuilder;
-import org.jline.reader.impl.history.DefaultHistory;
-import org.jline.terminal.Terminal;
-import org.jline.terminal.TerminalBuilder;
 import ru.app.collection.Collection;
 import ru.app.command.Command;
 import ru.app.command.ExitCommand;
 import ru.app.invoker.Invoker;
 import ru.app.io.ConsoleReader;
-import ru.app.io.JLineHistory;
 import ru.app.json.Json;
 import ru.app.object.Product;
 import ru.app.parser.CommandParser;
+import ru.app.source.CommandSource;
+import ru.app.source.ConsoleSource;
 
 import java.io.*;
-import java.nio.file.Path;
 import java.util.PriorityQueue;
+import java.util.Scanner;
 
+/**
+ * Main application class. Initializes collection, parser, invoker and starts command processing
+ * loop.
+ */
 public class Main {
   private static Collection collection;
   private static File dataFile;
@@ -26,69 +26,39 @@ public class Main {
   public static void main(String[] args) {
     initializeCollection(args);
 
-    Terminal terminal;
-    LineReader reader;
-    PrintWriter out;
-    ConsoleReader consoleReader;
-    Invoker invoker;
-    CommandParser parser;
-    JLineHistory history;
+    Scanner consoleScanner = new Scanner(System.in);
+    PrintWriter out = new PrintWriter(System.out, true);
+    ConsoleReader consoleReader = new ConsoleReader(out, collection);
+    Invoker invoker = new Invoker();
+    CommandParser parser =
+        new CommandParser(collection, out, consoleScanner, invoker, dataFile, consoleReader);
+    CommandSource source = new ConsoleSource(consoleScanner, out);
 
-    try {
-      terminal = TerminalBuilder.builder()
-          .system(true)
-          .build();
+    out.println("Application started. Type 'help' for available commands.");
+    while (true) {
+      try {
+        String line = source.readLine();
+        if (line == null) break;
 
-      Path historyPath = dataFile != null ? dataFile.toPath() : Path.of(".");
-      history = new JLineHistory(historyPath);
+        Command command = parser.parse(line);
+        invoker.execute(command);
 
-      DefaultHistory jlineHistory = history.getHistory();
-
-      reader = LineReaderBuilder.builder()
-          .terminal(terminal)
-          .history(jlineHistory)
-          .build();
-
-      out = terminal.writer();
-      consoleReader = new ConsoleReader(out, collection);
-      invoker = new Invoker();
-      invoker.setHistory(history.getHistoryList());
-      parser = new CommandParser(collection, out, terminal, invoker, dataFile, consoleReader);
-
-      out.println("Application started. Type 'help' for available commands.");
-      while (true) {
-        String line = null;
-        try {
-          line = reader.readLine("> ");
-          if (line == null || line.trim().isEmpty()) {
-            continue;
-          }
-
-          Command command = parser.parse(line);
-          invoker.execute(command);
-
-          if (command instanceof ExitCommand) {
-            break;
-          }
-
-          String commandName = JLineHistory.extractCommandName(line);
-          if (commandName != null) {
-            history.add(commandName);
-            history.save();
-          }
-        } catch (IllegalArgumentException e) {
-          out.println("Error: " + e.getMessage());
-        } catch (Exception e) {
-          out.println("Unexpected error: " + e.getMessage());
-        }
+        if (command instanceof ExitCommand) break;
+      } catch (IllegalArgumentException e) {
+        out.println("Error: " + e.getMessage());
+      } catch (Exception e) {
+        out.println("Unexpected error: " + e.getMessage());
       }
-
-      out.println("Application finished.");
-    } catch (Exception e) {
-      System.err.println("Terminal error: " + e.getMessage());
     }
+
+    out.println("Application finished.");
   }
 
+  /**
+   * Initializes collection based on command line arguments.
+   *
+   * @param args command line arguments
+   */
   private static void initializeCollection(String[] args) {
     if (args == null || args.length == 0) {
       System.err.println("No file name provided.");

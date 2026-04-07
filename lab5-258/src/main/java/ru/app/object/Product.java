@@ -26,8 +26,8 @@ public record Product(
    * @param id identifier (not null, >0)
    * @param name name (not null, not empty)
    * @param coordinates coordinates (not null)
-   * @param price price (may be null; if not null, must be >0 and must be finite, not NaN and
-   *     not infinity)
+   * @param price price (can be null; if not null, must be >0 and must be finite, not NaN and not
+   *     infinity)
    * @param partNumber part number (not null, length from 22 to 83 characters)
    * @param unitOfMeasure unit of measure (not null)
    * @param owner owner (not null)
@@ -88,9 +88,8 @@ public record Product(
   }
 
   /**
-   * Converts the object to a map for serialization. Nested objects (coordinates, owner)
-   * are also converted to maps. Creation date is saved as string representation
-   * (ZonedDateTime.toString).
+   * Converts the object to a map for serialization. Nested objects (coordinates, owner) are also
+   * converted to maps. Creation date is saved as string representation (ZonedDateTime.toString).
    *
    * @return map containing all object fields
    */
@@ -113,8 +112,8 @@ public record Product(
    *
    * @param map map with data
    * @return new Product instance
-   * @throws IllegalArgumentException if map is null, required keys are missing, values
-   *     have incorrect type or format
+   * @throws IllegalArgumentException if map is null, required keys are missing, values have
+   *     incorrect type or format
    */
   public static Product fromMap(Map<String, Object> map) throws IllegalArgumentException {
     if (map == null) throw new IllegalArgumentException("'map' can't be null.");
@@ -123,9 +122,8 @@ public record Product(
     if (idObj == null) throw new IllegalArgumentException("Missing 'id' in map");
     if (!(idObj instanceof Number)) throw new IllegalArgumentException("'id' must be a number");
     long idLong = ((Number) idObj).longValue();
-    if (idLong <= 0 || idLong > Integer.MAX_VALUE) {
+    if (idLong <= 0 || idLong > Integer.MAX_VALUE)
       throw new IllegalArgumentException("'id' must be > 0 and <= " + Integer.MAX_VALUE);
-    }
     Integer id = (int) idLong;
 
     Object nameObj = map.get("name");
@@ -146,9 +144,8 @@ public record Product(
       if (!(priceObj instanceof Number))
         throw new IllegalArgumentException("'price' must be a number");
       float priceVal = ((Number) priceObj).floatValue();
-      if (priceVal <= 0 || !Float.isFinite(priceVal)) {
+      if (priceVal <= 0 || !Float.isFinite(priceVal))
         throw new IllegalArgumentException("'price' must be > 0 and finite");
-      }
       price = priceVal;
     }
 

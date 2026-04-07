@@ -32,10 +32,7 @@ public class AddIfMinCommand extends AbstractCommand {
       return;
     }
     boolean added = collection.addIfMin(product);
-    if (added) {
-      println("Product was added with id=" + product.id());
-    } else {
-      println("Product was not added (id is not less than minimum).");
-    }
+    if (added) println("Product was added with id=" + product.id());
+    else println("Product was not added (id is not less than minimum).");
   }
 }

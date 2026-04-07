@@ -1,6 +1,5 @@
 package ru.app.parser;
 
-import org.jline.terminal.Terminal;
 import ru.app.collection.Collection;
 import ru.app.command.*;
 import ru.app.invoker.Invoker;
@@ -30,32 +29,6 @@ public class CommandParser {
   private final Command historyCommand;
   private final Command sumOfPriceCommand;
   private final Command averageOfPriceCommand;
-
-  public CommandParser(
-      Collection collection,
-      PrintWriter out,
-      Terminal terminal,
-      Invoker invoker,
-      File dataFile,
-      ConsoleReader consoleReader) {
-    this.collection = collection;
-    this.out = out;
-    this.scanner = new Scanner(terminal.input());
-    this.invoker = invoker;
-    this.dataFile = dataFile;
-    this.consoleReader = consoleReader;
-
-    helpCommand = new HelpCommand(collection, out);
-    infoCommand = new InfoCommand(collection, out);
-    showCommand = new ShowCommand(collection, out);
-    clearCommand = new ClearCommand(collection, out);
-    saveCommand = new SaveCommand(collection, out, dataFile);
-    exitCommand = new ExitCommand(collection, out);
-    removeFirstCommand = new RemoveFirstCommand(collection, out);
-    historyCommand = new HistoryCommand(collection, out, invoker);
-    sumOfPriceCommand = new SumOfPriceCommand(collection, out);
-    averageOfPriceCommand = new AverageOfPriceCommand(collection, out);
-  }
 
   public CommandParser(
       Collection collection,
@@ -91,9 +64,8 @@ public class CommandParser {
    * @throws IllegalArgumentException if command is unknown or arguments are incorrect
    */
   public Command parse(String line) {
-    if (line == null || line.isBlank()) {
+    if (line == null || line.isBlank())
       throw new IllegalArgumentException("Command cannot be empty.");
-    }
     String[] parts = line.trim().split("\\s+", 2);
     String commandName = parts[0].toLowerCase();
     String argument = parts.length > 1 ? parts[1] : null;
@@ -119,8 +91,7 @@ public class CommandParser {
       case "execute_script" -> {
         if (argument == null)
           throw new IllegalArgumentException("execute_script requires file name");
-        yield new ExecuteScriptCommand(
-            collection, out, argument, invoker, dataFile, consoleReader);
+        yield new ExecuteScriptCommand(collection, out, argument, invoker, dataFile, consoleReader);
       }
       case "exit" -> exitCommand;
       case "remove_first" -> removeFirstCommand;

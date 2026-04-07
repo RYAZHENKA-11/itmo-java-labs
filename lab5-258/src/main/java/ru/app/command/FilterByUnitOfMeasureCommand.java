@@ -26,10 +26,7 @@ public class FilterByUnitOfMeasureCommand extends AbstractCommand {
   @Override
   public void execute() {
     List<Product> filtered = collection.filterByUnitOfMeasure(unitOfMeasure);
-    if (filtered.isEmpty()) {
-      println("Filtered list is empty.");
-    } else {
-      filtered.forEach(p -> println(p.toString()));
-    }
+    if (filtered.isEmpty()) println("Filtered list is empty.");
+    else filtered.forEach(p -> println(p.toString()));
   }
 }

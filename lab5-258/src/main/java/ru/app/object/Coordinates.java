@@ -38,7 +38,8 @@ public record Coordinates(Integer x, Float y) {
    *
    * @param map map with data (must contain keys "x" and "y")
    * @return new Coordinates instance
-   * @throws IllegalArgumentException if map is null, keys are missing, or values have incorrect type
+   * @throws IllegalArgumentException if map is null, keys are missing, or values have incorrect
+   *     type
    */
   public static Coordinates fromMap(Map<String, Object> map) throws IllegalArgumentException {
     if (map == null) throw new IllegalArgumentException("'map' can't be null.");
@@ -47,9 +48,8 @@ public record Coordinates(Integer x, Float y) {
     if (xObj == null) throw new IllegalArgumentException("Missing 'x' in map");
     if (!(xObj instanceof Number)) throw new IllegalArgumentException("'x' must be a number");
     long xLong = ((Number) xObj).longValue();
-    if (xLong < Integer.MIN_VALUE || xLong > Integer.MAX_VALUE) {
+    if (xLong < Integer.MIN_VALUE || xLong > Integer.MAX_VALUE)
       throw new IllegalArgumentException("'x' must be within Integer range");
-    }
     Integer x = (int) xLong;
 
     Object yObj = map.get("y");
