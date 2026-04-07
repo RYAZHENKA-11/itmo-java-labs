@@ -12,6 +12,8 @@ import ru.app.source.CommandSource;
 import ru.app.source.ConsoleSource;
 
 import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.PriorityQueue;
 import java.util.Scanner;
 
@@ -32,7 +34,14 @@ public class Main {
     Invoker invoker = new Invoker();
     CommandParser parser =
         new CommandParser(collection, out, consoleScanner, invoker, dataFile, consoleReader);
-    CommandSource source = new ConsoleSource(consoleScanner, out);
+    Path historyFile = Paths.get("command_history.txt");
+    CommandSource source;
+    try {
+      source = new ConsoleSource(historyFile);
+    } catch (IOException e) {
+      System.err.println("Failed to initialize console: " + e.getMessage());
+      return;
+    }
 
     out.println("Application started. Type 'help' for available commands.");
     while (true) {
