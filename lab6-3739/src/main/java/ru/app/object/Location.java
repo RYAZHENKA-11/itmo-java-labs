@@ -1,10 +1,14 @@
 package ru.app.object;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 /** Person location. Fields y and name cannot be null; name length must not exceed 986. */
-public record Location(float x, Integer y, long z, String name) {
+public record Location(float x, Integer y, long z, String name) implements Serializable {
+
+  @Serial private static final long serialVersionUID = 1L;
 
   /**
    * Creates a location with validation of constraints.

@@ -1,23 +1,18 @@
 package ru.app.command;
 
 import ru.app.collection.Collection;
-import ru.app.io.ConsoleReader;
+import ru.app.network.Request;
 import ru.app.object.Product;
 
-import java.io.PrintWriter;
-import java.util.Scanner;
+import java.time.ZonedDateTime;
 
-/** Command to add a new element to the collection. */
+/**
+ * Command to add a new product to the collection.
+ *
+ * @author Lab6
+ * @version 1.0
+ */
 public class AddCommand extends AbstractCommand {
-  private final Scanner scanner;
-  private final ConsoleReader consoleReader;
-
-  public AddCommand(
-      Collection collection, PrintWriter out, Scanner scanner, ConsoleReader consoleReader) {
-    super(collection, out);
-    this.scanner = scanner;
-    this.consoleReader = consoleReader;
-  }
 
   @Override
   public String getName() {
@@ -25,17 +20,30 @@ public class AddCommand extends AbstractCommand {
   }
 
   @Override
-  public void execute() {
-    Product product = consoleReader.readProduct(scanner);
-    if (product == null) {
-      println("Product creation cancelled.");
-      return;
-    }
+  public CommandResult execute(Request request, Collection collection) {
+    Product product = request.product();
+    if (product == null) return CommandResult.error("No product data provided");
+    Integer newId;
     try {
-      collection.add(product);
-      println("Product was added with id=" + product.id());
+      newId = collection.nextId();
+    } catch (Exception e) {
+      newId = 1;
+    }
+    Product productWithId =
+        new Product(
+            newId,
+            product.name(),
+            product.coordinates(),
+            product.price(),
+            product.partNumber(),
+            product.unitOfMeasure(),
+            product.owner(),
+            ZonedDateTime.now());
+    try {
+      collection.add(productWithId);
+      return CommandResult.success("Product added with id=" + newId);
     } catch (IllegalArgumentException e) {
-      println("Error: " + e.getMessage());
+      return CommandResult.error(e.getMessage());
     }
   }
 }

@@ -1,22 +1,22 @@
 package ru.app.command;
 
 import ru.app.collection.Collection;
-import java.io.PrintWriter;
+import ru.app.network.Request;
 
-/** Command to output the average price of products. */
+/**
+ * Command to calculate and display the average price of all elements.
+ *
+ * @author Lab6
+ * @version 1.0
+ */
 public class AverageOfPriceCommand extends AbstractCommand {
-
-  public AverageOfPriceCommand(Collection collection, PrintWriter out) {
-    super(collection, out);
-  }
-
   @Override
   public String getName() {
     return "average_of_price";
   }
 
   @Override
-  public void execute() {
-    println(String.valueOf(collection.averagePrice()));
+  public CommandResult execute(Request request, Collection collection) {
+    return CommandResult.success(String.valueOf(collection.averagePrice()));
   }
 }

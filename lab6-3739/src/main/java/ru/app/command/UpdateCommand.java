@@ -1,51 +1,34 @@
 package ru.app.command;
 
 import ru.app.collection.Collection;
-import ru.app.io.ConsoleReader;
+import ru.app.network.Request;
 import ru.app.object.Product;
 
-import java.io.PrintWriter;
-import java.util.Scanner;
-
-/** Command to update an element by id. */
+/**
+ * Command to update an existing element in the collection by its ID.
+ *
+ * @author Lab6
+ * @version 1.0
+ */
 public class UpdateCommand extends AbstractCommand {
-  private final int id;
-  private final Scanner scanner;
-  private final ConsoleReader consoleReader;
-
-  public UpdateCommand(
-      Collection collection,
-      PrintWriter out,
-      int id,
-      Scanner scanner,
-      ConsoleReader consoleReader) {
-    super(collection, out);
-    this.id = id;
-    this.scanner = scanner;
-    this.consoleReader = consoleReader;
-  }
-
   @Override
   public String getName() {
     return "update";
   }
 
   @Override
-  public void execute() {
-    if (!collection.isExist(id)) {
-      println("Product with id=" + id + " doesn't exist.");
-      return;
-    }
-    Product newProduct = consoleReader.readProduct(scanner);
-    if (newProduct == null) {
-      println("Update cancelled.");
-      return;
-    }
+  public CommandResult execute(Request request, Collection collection) {
+    Integer id = request.id();
+    Product product = request.product();
+    if (id == null) return CommandResult.error("No ID provided");
+    if (product == null) return CommandResult.error("No product data provided");
+    if (!collection.isExist(id))
+      return CommandResult.error("Product with id=" + id + " doesn't exist.");
     try {
-      collection.update(id, newProduct);
-      println("Product with id=" + id + " updated.");
+      collection.update(id, product);
+      return CommandResult.success("Product with id=" + id + " updated.");
     } catch (IllegalArgumentException e) {
-      println("Error: " + e.getMessage());
+      return CommandResult.error(e.getMessage());
     }
   }
 }

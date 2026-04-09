@@ -1,14 +1,19 @@
 package ru.app.command;
 
 import ru.app.collection.Collection;
-import java.io.PrintWriter;
+import ru.app.network.Request;
+import ru.app.object.Product;
 
-/** Command to output all elements of the collection. */
+import java.util.Comparator;
+import java.util.List;
+
+/**
+ * Command to display all products in the collection sorted by name.
+ *
+ * @author Lab6
+ * @version 1.0
+ */
 public class ShowCommand extends AbstractCommand {
-
-  public ShowCommand(Collection collection, PrintWriter out) {
-    super(collection, out);
-  }
 
   @Override
   public String getName() {
@@ -16,11 +21,10 @@ public class ShowCommand extends AbstractCommand {
   }
 
   @Override
-  public void execute() {
-    if (collection.size() == 0) {
-      println("Empty.");
-      return;
-    }
-    collection.products().stream().sorted().forEach(p -> println(p.toString()));
+  public CommandResult execute(Request request, Collection collection) {
+    if (collection.size() == 0) return CommandResult.success("Empty.");
+    List<Product> products =
+        collection.products().stream().sorted(Comparator.comparing(Product::name)).toList();
+    return CommandResult.success("Products:", products);
   }
 }

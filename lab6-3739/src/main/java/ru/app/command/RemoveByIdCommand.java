@@ -1,28 +1,29 @@
 package ru.app.command;
 
 import ru.app.collection.Collection;
-import java.io.PrintWriter;
+import ru.app.network.Request;
 
-/** Command to remove an element by its id. */
+/**
+ * Command to remove an element from the collection by its ID.
+ *
+ * @author Lab6
+ * @version 1.0
+ */
 public class RemoveByIdCommand extends AbstractCommand {
-  private final int id;
-
-  public RemoveByIdCommand(Collection collection, PrintWriter out, int id) {
-    super(collection, out);
-    this.id = id;
-  }
-
   @Override
   public String getName() {
     return "remove_by_id";
   }
 
   @Override
-  public void execute() {
+  public CommandResult execute(Request request, Collection collection) {
+    Integer id = request.id();
+    if (id == null) return CommandResult.error("No ID provided");
     try {
       collection.remove(id);
+      return CommandResult.success("Product with id " + id + " removed");
     } catch (IllegalArgumentException e) {
-      println("Error: " + e.getMessage());
+      return CommandResult.error(e.getMessage());
     }
   }
 }

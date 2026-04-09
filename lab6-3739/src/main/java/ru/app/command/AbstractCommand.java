@@ -1,38 +1,19 @@
 package ru.app.command;
 
-import ru.app.collection.Collection;
-
-import java.io.PrintWriter;
-
-/** Abstract base command containing common fields and methods. */
+/**
+ * Abstract base class for all commands.
+ *
+ * <p>Provides common functionality for command implementations.
+ *
+ * @author Lab6
+ * @version 1.0
+ */
 public abstract class AbstractCommand implements Command {
-  protected final Collection collection;
-  protected final PrintWriter out;
 
   /**
-   * Constructor.
-   *
-   * @param collection the collection the command operates on
-   * @param out output stream for results
-   */
-  public AbstractCommand(Collection collection, PrintWriter out) {
-    this.collection = collection;
-    this.out = out;
-  }
-
-  /**
-   * Returns the command name (without arguments) for history.
+   * Returns the command name.
    *
    * @return command name
    */
   public abstract String getName();
-
-  /**
-   * Convenience method for printing a line.
-   *
-   * @param message message to print
-   */
-  protected void println(String message) {
-    out.println(message);
-  }
 }

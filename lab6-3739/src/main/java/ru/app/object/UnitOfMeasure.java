@@ -1,7 +1,9 @@
 package ru.app.object;
 
+import java.io.Serializable;
+
 /** Product units of measure. Used in {@link Product}. */
-public enum UnitOfMeasure {
+public enum UnitOfMeasure implements Serializable {
   /** Kilograms */
   KILOGRAMS,
   /** Liters */
@@ -9,5 +11,7 @@ public enum UnitOfMeasure {
   /** Milliliters */
   MILLILITERS,
   /** Milligrams */
-  MILLIGRAMS
+  MILLIGRAMS;
+
+  private static final long serialVersionUID = 1L;
 }

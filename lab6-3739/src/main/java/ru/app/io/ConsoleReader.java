@@ -37,7 +37,7 @@ public class ConsoleReader {
     Person owner = readPerson(scanner);
     if (owner == null) return null;
     return new Product(
-        collection.nextId(), name, coordinates, price, partNumber, uom, owner, ZonedDateTime.now());
+        null, name, coordinates, price, partNumber, uom, owner, ZonedDateTime.now());
   }
 
   public Coordinates readCoordinates(Scanner scanner) {

@@ -1,24 +1,29 @@
 package ru.app.command;
 
 import ru.app.collection.Collection;
-import java.io.PrintWriter;
+import ru.app.network.Request;
 
-/** Command to output information about the collection. */
+/**
+ * Command to display information about the collection.
+ *
+ * @author Lab6
+ * @version 1.0
+ */
 public class InfoCommand extends AbstractCommand {
-
-  public InfoCommand(Collection collection, PrintWriter out) {
-    super(collection, out);
-  }
-
   @Override
   public String getName() {
     return "info";
   }
 
   @Override
-  public void execute() {
-    println("Type: java.util.PriorityQueue");
-    println("Init date: " + collection.creationDate());
-    println("Count of elements: " + collection.size());
+  public CommandResult execute(Request request, Collection collection) {
+    String info =
+        "Type: java.util.PriorityQueue\n"
+            + "Init date: "
+            + collection.creationDate()
+            + "\n"
+            + "Count of elements: "
+            + collection.size();
+    return CommandResult.success(info);
   }
 }

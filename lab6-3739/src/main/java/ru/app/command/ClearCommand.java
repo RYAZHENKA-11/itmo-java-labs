@@ -1,23 +1,23 @@
 package ru.app.command;
 
 import ru.app.collection.Collection;
-import java.io.PrintWriter;
+import ru.app.network.Request;
 
-/** Command to clear the collection. */
+/**
+ * Command to clear all elements from the collection.
+ *
+ * @author Lab6
+ * @version 1.0
+ */
 public class ClearCommand extends AbstractCommand {
-
-  public ClearCommand(Collection collection, PrintWriter out) {
-    super(collection, out);
-  }
-
   @Override
   public String getName() {
     return "clear";
   }
 
   @Override
-  public void execute() {
+  public CommandResult execute(Request request, Collection collection) {
     collection.clear();
-    println("Collection was cleared.");
+    return CommandResult.success("Collection was cleared.");
   }
 }

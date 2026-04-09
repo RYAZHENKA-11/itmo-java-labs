@@ -1,0 +1,112 @@
+@startuml
+skinparam linetype ortho
+hide empty members
+skinparam ArrowThickness 0.5
+
+' ==================== Classes ====================
+class Client
+class Server
+class ClientConnectionModule
+class ServerConnectionModule
+class ServerRequestModule
+class ServerCommandModule
+class ServerResponseModule
+class CommandFactory
+class Collection
+enum UnitOfMeasure
+class Coordinates <<record>>
+class Location <<record>>
+class Person <<record>>
+class Product <<record>>
+interface Command
+abstract class AbstractCommand
+class AddCommand
+class AddIfMinCommand
+class AverageOfPriceCommand
+class ClearCommand
+class ExecuteScriptCommand
+class ExitCommand
+class FilterByUnitOfMeasureCommand
+class HelpCommand
+class HistoryCommand
+class InfoCommand
+class RemoveByIdCommand
+class RemoveFirstCommand
+class SaveCommand
+class ShowCommand
+class SumOfPriceCommand
+class UpdateCommand
+class CommandResult <<record>>
+enum CommandType
+class Request <<record>>
+class Response <<record>>
+class Json
+class ConsoleReader
+
+' ==================== Relationships ====================
+Client --> ClientConnectionModule
+Client --> ConsoleReader
+Client --> Request
+Client ..> Response
+
+Server --> Collection
+Server --> ServerConnectionModule
+
+ServerConnectionModule --> ServerRequestModule
+ServerConnectionModule --> ServerCommandModule
+ServerConnectionModule --> ServerResponseModule
+
+ServerCommandModule --> Collection
+ServerCommandModule --> CommandFactory
+ServerCommandModule --> Json
+
+CommandFactory --> AbstractCommand
+
+AbstractCommand ..|> Command
+AddCommand --|> AbstractCommand
+AddIfMinCommand --|> AbstractCommand
+AverageOfPriceCommand --|> AbstractCommand
+ClearCommand --|> AbstractCommand
+ExecuteScriptCommand --|> AbstractCommand
+ExitCommand --|> AbstractCommand
+FilterByUnitOfMeasureCommand --|> AbstractCommand
+HelpCommand --|> AbstractCommand
+HistoryCommand --|> AbstractCommand
+InfoCommand --|> AbstractCommand
+RemoveByIdCommand --|> AbstractCommand
+RemoveFirstCommand --|> AbstractCommand
+SaveCommand --|> AbstractCommand
+ShowCommand --|> AbstractCommand
+SumOfPriceCommand --|> AbstractCommand
+UpdateCommand --|> AbstractCommand
+
+AbstractCommand ..> CommandResult
+AbstractCommand --> Collection
+
+Request --> CommandType
+Request --> Product
+Response --> CommandResult
+
+Collection *-- Product
+
+Product *-- Coordinates
+Product *-- Person
+Product --> UnitOfMeasure
+Person *-- Location
+
+Json ..> Product
+Json ..> Collection
+
+ConsoleReader --> Product
+ConsoleReader --> Coordinates
+ConsoleReader --> Person
+ConsoleReader --> Location
+ConsoleReader --> UnitOfMeasure
+
+ClientConnectionModule --> Request
+ClientConnectionModule --> Response
+ServerRequestModule --> Request
+ServerResponseModule --> Response
+ServerCommandModule --> CommandResult
+CommandResult --> Response
+@enduml

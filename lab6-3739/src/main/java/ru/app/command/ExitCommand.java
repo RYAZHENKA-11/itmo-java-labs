@@ -1,23 +1,22 @@
 package ru.app.command;
 
 import ru.app.collection.Collection;
-import java.io.PrintWriter;
+import ru.app.network.Request;
 
 /**
- * Command to exit the program. Serves as a marker for the main loop - after its execution the loop
- * should break.
+ * Command to exit the application.
+ *
+ * @author Lab6
+ * @version 1.0
  */
 public class ExitCommand extends AbstractCommand {
-
-  public ExitCommand(Collection collection, PrintWriter out) {
-    super(collection, out);
-  }
-
   @Override
   public String getName() {
     return "exit";
   }
 
   @Override
-  public void execute() {}
+  public CommandResult execute(Request request, Collection collection) {
+    return CommandResult.error("exit command is not available via network");
+  }
 }

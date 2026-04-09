@@ -1,5 +1,7 @@
 package ru.app.object;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.HashMap;
@@ -18,7 +20,9 @@ public record Product(
     UnitOfMeasure unitOfMeasure,
     Person owner,
     ZonedDateTime creationDate)
-    implements Comparable<Product> {
+    implements Comparable<Product>, Serializable {
+
+  @Serial private static final long serialVersionUID = 1L;
 
   /**
    * Creates a product with validation of all fields according to requirements.
@@ -43,8 +47,7 @@ public record Product(
       UnitOfMeasure unitOfMeasure,
       Person owner,
       ZonedDateTime creationDate) {
-    if (id == null) throw new IllegalArgumentException("'id' can't be null.");
-    if (id <= 0) throw new IllegalArgumentException("'id' can't be <= 0.");
+    if (id != null && id <= 0) throw new IllegalArgumentException("'id' can't be <= 0.");
     this.id = id;
 
     if (name == null) throw new IllegalArgumentException("'name' can't be null.");

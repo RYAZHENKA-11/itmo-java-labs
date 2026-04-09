@@ -1,5 +1,7 @@
 package ru.app.object;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +12,10 @@ import java.text.SimpleDateFormat;
  * Person (product owner). Name cannot be null or empty; location cannot be null. Birthday and
  * passport may be null.
  */
-public record Person(String name, Date birthday, String passportID, Location location) {
+public record Person(String name, Date birthday, String passportID, Location location)
+    implements Serializable {
+
+  @Serial private static final long serialVersionUID = 1L;
 
   /**
    * Creates a person with validation of constraints.

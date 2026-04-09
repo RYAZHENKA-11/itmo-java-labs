@@ -1,38 +1,22 @@
 package ru.app.command;
 
 import ru.app.collection.Collection;
-import ru.app.json.Json;
+import ru.app.network.Request;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.file.Files;
-
-/** Command to save the collection to a file. */
+/**
+ * Command to save the collection to a file.
+ *
+ * @author Lab6
+ * @version 1.0
+ */
 public class SaveCommand extends AbstractCommand {
-  private final File file;
-
-  public SaveCommand(Collection collection, PrintWriter out, File file) {
-    super(collection, out);
-    this.file = file;
-  }
-
   @Override
   public String getName() {
     return "save";
   }
 
   @Override
-  public void execute() {
-    if (file == null) {
-      println("No file specified. Restart with a file.");
-      return;
-    }
-    try (BufferedWriter writer = Files.newBufferedWriter(file.toPath())) {
-      Json.writeProducts(collection.products(), writer);
-    } catch (IOException e) {
-      println("Error: " + e.getMessage());
-    }
+  public CommandResult execute(Request request, Collection collection) {
+    return CommandResult.error("save command is server-only, use server console");
   }
 }

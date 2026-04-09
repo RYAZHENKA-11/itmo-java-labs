@@ -1,10 +1,14 @@
 package ru.app.object;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 /** Product coordinates. Both fields cannot be null. */
-public record Coordinates(Integer x, Float y) {
+public record Coordinates(Integer x, Float y) implements Serializable {
+
+  @Serial private static final long serialVersionUID = 1L;
 
   /**
    * Creates coordinates with null validation.
